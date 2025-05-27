@@ -1,0 +1,1692 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="Content-Security-Policy" content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://code.jquery.com https://unpkg.com https://d3js.org https://threejs.org https://cdn.plot.ly https://stackpath.bootstrapcdn.com https://maps.googleapis.com https://cdn.tailwindcss.com https://ajax.googleapis.com https://kit.fontawesome.com https://cdn.datatables.net https://maxcdn.bootstrapcdn.com https://code.highcharts.com https://tako-static-assets-production.s3.amazonaws.com https://www.youtube.com https://fonts.googleapis.com https://fonts.gstatic.com https://pfst.cf2.poecdn.net https://puc.poecdn.net https://i.imgur.com https://wikimedia.org https://*.icons8.com https://*.giphy.com https://picsum.photos https://images.unsplash.com; frame-src 'self' https://www.youtube.com https://trytako.com; child-src 'self'; manifest-src 'self'; worker-src 'self'; upgrade-insecure-requests; block-all-mixed-content;">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>S-21 Capture</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --primary: #5D5CDE;
+  --primary-dark: #4a49b3;
+  --primary-light: #7e7de8;
+  --secondary: #3cd2c3;
+  --danger: #e53e3e;
+  --success: #38a169;
+  --warning: #f6ad55;
+  --bg-light: #ffffff;
+  --text-light: #2d3748;
+  --bg-dark: #181818;
+  --text-dark: #f7fafc;
+  --card-light: #ffffff;
+  --card-dark: #222222;
+  --border-light: #e2e8f0;
+  --border-dark: #333333;
+}
+
+body {
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  transition: background-color 0.3s, color 0.3s;
+  background-color: var(--bg-light);
+  color: var(--text-light);
+}
+
+.dark body {
+  background-color: var(--bg-dark);
+  color: var(--text-dark);
+}
+
+.app-card {
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  background-color: var(--card-light);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s;
+}
+
+.dark .app-card {
+  background-color: var(--card-dark);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.app-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+}
+
+.dark .app-card:hover {
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+}
+
+.gradient-heading {
+  background: linear-gradient(45deg, var(--primary), var(--primary-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  position: relative;
+}
+
+.gradient-heading::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(45deg, var(--primary), var(--primary-light));
+  border-radius: 2px;
+}
+
+.btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  transition: all 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.btn-primary {
+  background: linear-gradient(45deg, var(--primary), var(--primary-light));
+  color: white;
+}
+
+.btn-secondary {
+  background: linear-gradient(45deg, var(--secondary), #4edfd2);
+  color: white;
+}
+
+.btn-success {
+  background: linear-gradient(45deg, var(--success), #48bb78);
+  color: white;
+}
+
+.btn-danger {
+  background: linear-gradient(45deg, var(--danger), #f56565);
+  color: white;
+}
+
+.btn:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.file-drop-area {
+  border: 2px dashed #cbd5e0;
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.file-drop-area:hover, .file-drop-area.dragover {
+  border-color: var(--primary);
+  background-color: rgba(93, 92, 222, 0.05);
+}
+
+.dark .file-drop-area {
+  border-color: #4a5568;
+}
+
+.dark .file-drop-area:hover, .dark .file-drop-area.dragover {
+  border-color: var(--primary-light);
+  background-color: rgba(93, 92, 222, 0.1);
+}
+
+.file-input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.accordion-header {
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.3s;
+}
+
+.accordion-header:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+.dark .accordion-header:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.accordion-icon {
+  transition: transform 0.3s ease;
+}
+
+.accordion-icon.collapsed {
+  transform: rotate(-90deg);
+}
+
+.accordion-content {
+  max-height: 400px;
+  overflow-y: auto;
+  transition: max-height 0.3s ease-out;
+}
+
+.accordion-content.collapsed {
+  max-height: 0;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 8px;
+  border-radius: 4px;
+  background-color: #e2e8f0;
+  overflow: hidden;
+}
+
+.dark .progress-bar {
+  background-color: #2d3748;
+}
+
+.progress-value {
+  height: 100%;
+  border-radius: 4px;
+  background: linear-gradient(45deg, var(--primary), var(--primary-light));
+  width: 0%;
+  transition: width 0.3s ease;
+}
+
+/* Table styles */
+.data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.data-table th {
+  background-color: #f8fafc;
+  color: #4a5568;
+  font-weight: 600;
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 2px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.dark .data-table th {
+  background-color: #2d3748;
+  color: #e2e8f0;
+  border-bottom: 2px solid #4a5568;
+}
+
+.data-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  vertical-align: middle;
+}
+
+.dark .data-table td {
+  border-bottom: 1px solid #4a5568;
+}
+
+.data-table tr:hover td {
+  background-color: rgba(93, 92, 222, 0.05);
+}
+
+.dark .data-table tr:hover td {
+  background-color: rgba(93, 92, 222, 0.1);
+}
+
+.data-table input[type="text"],
+.data-table input[type="date"],
+.data-table select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: transparent;
+  transition: border-color 0.3s;
+}
+
+.data-table input[type="text"]:focus,
+.data-table input[type="date"]:focus,
+.data-table select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(93, 92, 222, 0.2);
+}
+
+.dark .data-table input[type="text"],
+.dark .data-table input[type="date"],
+.dark .data-table select {
+  border-color: #4a5568;
+  color: var(--text-dark);
+}
+
+.dark .data-table input[type="text"]:focus,
+.dark .data-table input[type="date"]:focus,
+.dark .data-table select:focus {
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 2px rgba(93, 92, 222, 0.3);
+}
+
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.checkbox-wrapper input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Animation classes */
+.fade-in {
+  animation: fadeIn 0.5s ease forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Button state transition animation */
+@keyframes buttonChange {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.button-state-change {
+  animation: buttonChange 0.5s ease;
+}
+
+/* Canvas viewer */
+.canvas-viewer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.canvas-container {
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+.dark .canvas-container {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-track {
+  background: #2d3748;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 4px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #4a5568;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #718096;
+}
+
+/* Toast notification */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 16px 24px;
+  border-radius: 8px;
+  color: white;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 1000;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.toast-success {
+  background-color: var(--success);
+}
+
+.toast-error {
+  background-color: var(--danger);
+}
+
+.toast-warning {
+  background-color: var(--warning);
+}
+
+.toast-info {
+  background-color: var(--primary);
+}
+
+/* App steps indicator */
+.step-indicator {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  position: relative;
+}
+
+.step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 16px;
+  right: -50%;
+  width: 100%;
+  height: 2px;
+  background-color: #e2e8f0;
+  z-index: 0;
+}
+
+.dark .step:not(:last-child)::after {
+  background-color: #4a5568;
+}
+
+.step-number {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #e2e8f0;
+  color: #4a5568;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  margin-bottom: 8px;
+  position: relative;
+  z-index: 1;
+  transition: all 0.3s ease;
+}
+
+.dark .step-number {
+  background-color: #4a5568;
+  color: #e2e8f0;
+}
+
+.step.active .step-number {
+  background-color: var(--primary);
+  color: white;
+}
+
+.step.completed .step-number {
+  background-color: var(--success);
+  color: white;
+}
+
+.step-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #4a5568;
+  text-align: center;
+}
+
+.dark .step-label {
+  color: #e2e8f0;
+}
+
+.step.active .step-label {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.dark .step.active .step-label {
+  color: var(--primary-light);
+}
+
+.step.completed .step-label {
+  color: var(--success);
+}
+
+.dark .step.completed .step-label {
+  color: #68d391;
+}
+
+.step.completed:not(:last-child)::after {
+  background-color: var(--success);
+}
+
+.section-transition {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.section-hidden {
+  opacity: 0;
+  transform: translateY(20px);
+  pointer-events: none;
+  position: absolute;
+}
+
+.section-visible {
+  opacity: 1;
+  transform: translateY(0);
+  position: relative;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.dark .card-header {
+  border-bottom-color: var(--border-dark);
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.analysis-complete {
+  padding: 16px;
+  border-radius: 8px;
+  background-color: rgba(56, 161, 105, 0.1);
+  border-left: 4px solid var(--success);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.analysis-complete.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dark .analysis-complete {
+  background-color: rgba(56, 161, 105, 0.2);
+}
+
+/* Privacy notice */
+.privacy-notice {
+  padding: 16px;
+  border-radius: 8px;
+  background-color: rgba(93, 92, 222, 0.05);
+  border-left: 4px solid var(--primary);
+  margin-bottom: 24px;
+}
+
+.dark .privacy-notice {
+  background-color: rgba(93, 92, 222, 0.1);
+}
+
+.privacy-notice h3 {
+  font-weight: 600;
+  color: var(--primary-dark);
+  margin-bottom: 8px;
+}
+
+.dark .privacy-notice h3 {
+  color: var(--primary-light);
+}
+
+.privacy-notice p {
+  margin-bottom: 8px;
+}
+
+.privacy-notice p:last-child {
+  margin-bottom: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .step-label {
+    font-size: 12px;
+  }
+  
+  .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+  
+  .data-table th, 
+  .data-table td {
+    padding: 8px 12px;
+  }
+  
+  .file-drop-area {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .step:not(:last-child)::after {
+    display: none;
+  }
+  
+  .step-indicator {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .step {
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: flex-start;
+  }
+  
+  .step-label {
+    text-align: left;
+  }
+}
+</style>
+</head>
+<body class="min-h-screen py-8 px-4 md:px-8">
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-3xl md:text-4xl font-bold text-center mb-6 gradient-heading">S-21 Capture</h1>
+        
+        <!-- Privacy Notice -->
+        <div class="privacy-notice fade-in mb-8">
+            <h3><i class="fas fa-shield-alt mr-2"></i>Data Privacy Notice</h3>
+            <p><strong>English:</strong> No data is stored by this application or in the cloud. All processing is done locally in your browser.</p>
+            <p><strong>Português:</strong> Nenhum dado é salvo por este aplicativo ou na nuvem. Todo o processamento é feito localmente no seu navegador.</p>
+        </div>
+        
+        <!-- Step Indicator -->
+        <div class="step-indicator mb-8">
+            <div class="step active" id="step-1">
+                <div class="step-number">1</div>
+                <div class="step-label">Upload PDFs</div>
+            </div>
+            <div class="step" id="step-2">
+                <div class="step-number">2</div>
+                <div class="step-label">Analyze Data</div>
+            </div>
+            <div class="step" id="step-3">
+                <div class="step-number">3</div>
+                <div class="step-label">Preview &amp; Edit</div>
+            </div>
+            <div class="step" id="step-4">
+                <div class="step-number">4</div>
+                <div class="step-label">Export CSV</div>
+            </div>
+        </div>
+        
+        <!-- Upload Section -->
+        <div id="upload-section" class="section-transition section-visible">
+            <div class="app-card p-6 md:p-8 mb-8">
+                <div class="card-header">
+                    <h2 class="text-xl font-semibold">Upload S-21 Forms</h2>
+                </div>
+                
+                <div class="file-drop-area mb-6" id="drop-area">
+                    <i class="fas fa-file-pdf text-4xl mb-4 text-gray-400"></i>
+                    <p class="mb-2 font-medium">Drag &amp; drop PDF files here</p>
+                    <p class="text-sm text-gray-500 mb-4">or click to browse files</p>
+                    <input type="file" id="pdfs" name="pdfs" class="file-input" multiple="" accept=".pdf">
+                </div>
+                
+                <div class="mb-6">
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="invertNames" class="mr-2 h-5 w-5">
+                        <span>Invert First/Last Name</span>
+                    </label>
+                </div>
+                
+                <div class="flex flex-wrap gap-4">
+                    <button type="button" id="analyze-btn" class="btn btn-primary flex-1" onclick="startAnalysis()">
+                        <i class="fas fa-search-plus"></i>
+                        Analyze PDFs
+                    </button>
+                </div>
+            </div>
+            
+            <div id="selected-files" class="app-card p-6 hidden">
+                <h3 class="text-lg font-medium mb-4">Selected Files</h3>
+                <ul id="file-list" class="space-y-2"></ul>
+            </div>
+        </div>
+        
+        <!-- Analysis Section -->
+        <div id="analysis-section" class="section-transition section-hidden">
+            <div class="app-card p-6 md:p-8 mb-8">
+                <div class="card-header">
+                    <h2 class="text-xl font-semibold">Analyzing PDFs</h2>
+                    <div class="nav-buttons">
+                        <button type="button" id="back-to-upload-btn" class="btn btn-primary" onclick="goBackToUpload()">
+                            <i class="fas fa-arrow-left"></i>
+                            Back
+                        </button>
+                        <button type="button" id="preview-btn" class="btn btn-success" onclick="goToPreview()" disabled="">
+                            Continue
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="analysis-complete" class="analysis-complete">
+                    <i class="fas fa-check-circle text-green-500 text-xl"></i>
+                    <div>
+                        <h3 class="font-medium text-green-700 dark:text-green-300">Analysis Complete!</h3>
+                        <p class="text-sm text-green-600 dark:text-green-400">All PDFs have been processed successfully.</p>
+                    </div>
+                </div>
+                
+                <div id="progress-container" class="mb-6">
+                    <div class="flex justify-between mb-2">
+                        <span id="progress-text">Processing files...</span>
+                        <span id="progress-percentage">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div id="progress-bar" class="progress-value"></div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap gap-4">
+                    <button type="button" id="analyzing-btn" class="btn btn-primary flex-1">
+                        <i id="analysis-icon" class="fas fa-spinner fa-spin"></i>
+                        <span id="analysis-text">Analyzing...</span>
+                    </button>
+                </div>
+            </div>
+            
+            <div class="app-card p-6 md:p-8 mb-8">
+                <div class="accordion-header flex justify-between items-center py-2" onclick="toggleStatus()">
+                    <h3 class="text-lg font-medium">PDF Processing Details</h3>
+                    <i class="fas fa-chevron-down accordion-icon"></i>
+                </div>
+                
+                <div id="checkbox-status" class="accordion-content collapsed mt-4 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg font-mono text-sm whitespace-pre-wrap"></div>
+            </div>
+            
+            <div class="pdf-preview grid grid-cols-1 gap-6" id="pdf-preview">
+                <!-- PDFs will be displayed here -->
+            </div>
+        </div>
+        
+        <!-- Preview Section -->
+        <div id="preview-section" class="section-transition section-hidden">
+            <div class="app-card p-6 md:p-8 mb-8">
+                <div class="card-header">
+                    <h2 class="text-xl font-semibold">Preview &amp; Edit Data</h2>
+                    <div class="nav-buttons">
+                        <button type="button" class="btn btn-primary" onclick="goBackToAnalysis()">
+                            <i class="fas fa-arrow-left"></i>
+                            Back
+                        </button>
+                        <button type="button" class="btn btn-success" onclick="goToExport()">
+                            Continue
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="flex justify-end mb-4">
+                    <button type="button" class="btn btn-success" onclick="addNewRow()">
+                        <i class="fas fa-plus"></i>
+                        Add Row
+                    </button>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table id="csv-preview-table" class="data-table">
+                        <thead>
+                            <tr>
+                                <th>First Name</th>
+                                <th>Middle Name</th>
+                                <th>Last Name</th>
+                                <th>Gender</th>
+                                <th>Birth Date</th>
+                                <th>Baptism Date</th>
+                                <th class="text-center">Elder</th>
+                                <th class="text-center">Min. Servant</th>
+                                <th class="text-center">Pioneer</th>
+                                <th class="text-center">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="csv-preview-body">
+                            <!-- CSV data will be displayed here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Export Section -->
+        <div id="export-section" class="section-transition section-hidden">
+            <div class="app-card p-6 md:p-8 mb-8">
+                <div class="card-header">
+                    <h2 class="text-xl font-semibold">Export Data</h2>
+                    <div class="nav-buttons">
+                        <button type="button" class="btn btn-primary" onclick="goBackToPreview()">
+                            <i class="fas fa-arrow-left"></i>
+                            Back
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="bg-green-50 dark:bg-green-900 p-4 rounded-lg mb-6">
+                    <div class="flex items-start">
+                        <i class="fas fa-check-circle text-green-500 mt-1 mr-3"></i>
+                        <div>
+                            <p class="font-medium text-green-800 dark:text-green-200">Your data is ready to export</p>
+                            <p class="text-sm text-green-600 dark:text-green-300 mt-1">The CSV file will be compatible with Circuit Assistant.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                        <h3 class="font-medium mb-2">Data Summary</h3>
+                        <p class="text-sm"><span id="total-records">0</span> records will be exported</p>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap">
+                    <button type="button" class="btn btn-success flex-1" onclick="salvarCSVFromPreview()">
+                        <i class="fas fa-file-csv"></i>
+                        Download Circuit Assistant CSV
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Toast Notification -->
+        <div id="toast" class="toast">
+            <i class="fas fa-info-circle"></i>
+            <span id="toast-message"></span>
+        </div>
+    </div>
+
+    <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    
+    // Support for dark mode detection
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.classList.add('dark');
+    }
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', event => {
+        if (event.matches) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    });
+    
+    // Global variables
+    let checkboxData = [];
+    let previewData = []; // Array to store the data for the CSV preview
+    let gender, hope;
+    let currentStep = 1;
+    
+    // DOM elements
+    const fileInput = document.getElementById('pdfs');
+    const dropArea = document.getElementById('drop-area');
+    const fileList = document.getElementById('file-list');
+    const selectedFilesCard = document.getElementById('selected-files');
+    
+    // Initialize the app
+    document.addEventListener('DOMContentLoaded', function() {
+        setupFileUpload();
+        updateStepIndicator();
+    });
+    
+    // Setup file upload with drag and drop
+    function setupFileUpload() {
+        // File input change event
+        fileInput.addEventListener('change', function() {
+            updateFileList();
+        });
+        
+        // Drag and drop events
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, highlight, false);
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, unhighlight, false);
+        });
+        
+        function highlight() {
+            dropArea.classList.add('dragover');
+        }
+        
+        function unhighlight() {
+            dropArea.classList.remove('dragover');
+        }
+        
+        dropArea.addEventListener('drop', handleDrop, false);
+        
+        function handleDrop(e) {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            fileInput.files = files;
+            updateFileList();
+        }
+    }
+    
+    // Update the list of selected files
+    function updateFileList() {
+        const files = fileInput.files;
+        
+        if (files.length > 0) {
+            fileList.innerHTML = '';
+            selectedFilesCard.classList.remove('hidden');
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const fileItem = document.createElement('li');
+                fileItem.className = 'flex items-center';
+                fileItem.innerHTML = `
+                    <i class="fas fa-file-pdf text-red-500 mr-2"></i>
+                    <span class="text-sm">${file.name} (${formatFileSize(file.size)})</span>
+                `;
+                fileList.appendChild(fileItem);
+            }
+        } else {
+            selectedFilesCard.classList.add('hidden');
+        }
+    }
+    
+    // Format file size in KB/MB
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+    }
+    
+    // Go back to upload section
+    function goBackToUpload() {
+        currentStep = 1;
+        updateStepIndicator();
+        switchSection('analysis-section', 'upload-section');
+    }
+    
+    // Start the analysis process
+    function startAnalysis() {
+        if (fileInput.files.length === 0) {
+            showToast('Please select at least one PDF file.', 'error');
+            return;
+        }
+        
+        // Update steps
+        currentStep = 2;
+        updateStepIndicator();
+        
+        // Show analysis section
+        switchSection('upload-section', 'analysis-section');
+        
+        // Hide completion message
+        document.getElementById('analysis-complete').classList.remove('show');
+        
+        // Reset the analysis button to initial state
+        const analyzingBtn = document.getElementById('analyzing-btn');
+        const analysisIcon = document.getElementById('analysis-icon');
+        const analysisText = document.getElementById('analysis-text');
+        
+        analyzingBtn.className = 'btn btn-primary opacity-50 cursor-not-allowed flex-1';
+        analysisIcon.className = 'fas fa-spinner fa-spin';
+        analysisText.textContent = 'Analyzing...';
+        
+        document.getElementById('preview-btn').disabled = true;
+        
+        // Start PDF analysis
+        extrairDados();
+    }
+    
+    // Go to preview section
+    function goToPreview() {
+        if (previewData.length === 0) {
+            showToast('No data to preview. Please analyze PDFs first.', 'error');
+            return;
+        }
+        
+        // Update steps
+        currentStep = 3;
+        updateStepIndicator();
+        
+        // Show preview section
+        switchSection('analysis-section', 'preview-section');
+        
+        // Display the preview data
+        displayPreviewData();
+    }
+    
+    // Go to export section
+    function goToExport() {
+        if (previewData.length === 0) {
+            showToast('No data to export. Please add at least one row.', 'error');
+            return;
+        }
+        
+        // Update steps
+        currentStep = 4;
+        updateStepIndicator();
+        
+        // Show export section
+        switchSection('preview-section', 'export-section');
+        
+        // Update the record count
+        document.getElementById('total-records').textContent = previewData.length;
+    }
+    
+    // Go back to analysis section
+    function goBackToAnalysis() {
+        currentStep = 2;
+        updateStepIndicator();
+        switchSection('preview-section', 'analysis-section');
+    }
+    
+    // Go back to preview section
+    function goBackToPreview() {
+        currentStep = 3;
+        updateStepIndicator();
+        switchSection('export-section', 'preview-section');
+    }
+    
+    // Update the step indicator
+    function updateStepIndicator() {
+        const steps = document.querySelectorAll('.step');
+        
+        steps.forEach((step, index) => {
+            const stepNumber = index + 1;
+            
+            step.classList.remove('active', 'completed');
+            
+            if (stepNumber < currentStep) {
+                step.classList.add('completed');
+            } else if (stepNumber === currentStep) {
+                step.classList.add('active');
+            }
+        });
+    }
+    
+    // Switch between sections
+    function switchSection(fromId, toId) {
+        const fromSection = document.getElementById(fromId);
+        const toSection = document.getElementById(toId);
+        
+        // Hide the current section
+        fromSection.classList.remove('section-visible');
+        fromSection.classList.add('section-hidden');
+        
+        // Show the target section
+        toSection.classList.remove('section-hidden');
+        toSection.classList.add('section-visible');
+        
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    // Show toast notification
+    function showToast(message, type = 'info') {
+        const toast = document.getElementById('toast');
+        const toastMessage = document.getElementById('toast-message');
+        
+        // Set the message
+        toastMessage.textContent = message;
+        
+        // Set the toast type
+        toast.className = 'toast';
+        toast.classList.add(`toast-${type}`);
+        
+        // Show the toast
+        toast.classList.add('show');
+        
+        // Hide after 3 seconds
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    }
+    
+    // Toggle status accordion
+    function toggleStatus() {
+        const accordionContent = document.getElementById('checkbox-status');
+        const accordionIcon = document.querySelector('.accordion-icon');
+        
+        accordionContent.classList.toggle('collapsed');
+        accordionIcon.classList.toggle('collapsed');
+    }
+    
+    // Process name splitting
+    function splitName(fullName) {
+      function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+      }
+    
+      if (document.getElementById('invertNames').checked) {
+        if (!fullName) return {
+          primeiro: '',
+          meio: '',
+          ultimo: ''
+        };
+        const parts = fullName.trim().split(' ');
+        if (parts.length === 1) {
+          return {
+            primeiro: '',
+            meio: '',
+            ultimo: capitalizeFirstLetter(parts[0])
+          };
+        } else if (parts.length === 2) {
+          return {
+            primeiro: capitalizeFirstLetter(parts[1]),
+            meio: '',
+            ultimo: capitalizeFirstLetter(parts[0])
+          };
+        } else {
+          return {
+            primeiro: capitalizeFirstLetter(parts[parts.length - 1]),
+            meio: parts.slice(1, -1).map(capitalizeFirstLetter).join(' '),
+            ultimo: capitalizeFirstLetter(parts[0])
+          };
+        }
+      } else {
+        if (!fullName) return {
+          primeiro: '',
+          meio: '',
+          ultimo: ''
+        };
+        const parts = fullName.trim().split(' ');
+        if (parts.length === 1) {
+          return {
+            primeiro: capitalizeFirstLetter(parts[0]),
+            meio: '',
+            ultimo: ''
+          };
+        } else if (parts.length === 2) {
+          return {
+            primeiro: capitalizeFirstLetter(parts[0]),
+            meio: '',
+            ultimo: capitalizeFirstLetter(parts[1])
+          };
+        } else {
+          return {
+            primeiro: capitalizeFirstLetter(parts[0]),
+            meio: parts.slice(1, -1).map(capitalizeFirstLetter).join(' '),
+            ultimo: capitalizeFirstLetter(parts[parts.length - 1])
+          };
+        }
+      }
+    }
+    
+    // Format date
+    function formatDate(dateStr) {
+      if (!dateStr) return '';
+      dateStr = dateStr.replace(/[./\\]/g, '-');
+      const parts = dateStr.split('-');
+      if (parts.length === 3) {
+        if (parts[2].length === 2) {
+          parts[2] = '20' + parts[2];
+        }
+        const date = new Date(parts[2], parts[1] - 1, parts[0]);
+        if (!isNaN(date.getTime())) {
+          return `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+        }
+        const altDate = new Date(parts[2], parts[0] - 1, parts[1]);
+        if (!isNaN(altDate.getTime())) {
+          return `${parts[2]}-${parts[0].padStart(2, '0')}-${parts[1].padStart(2, '0')}`;
+        }
+      }
+      return dateStr;
+    }
+    
+    // Update analysis button state
+    function updateAnalysisButtonState(isCompleted) {
+        const analyzingBtn = document.getElementById('analyzing-btn');
+        const analysisIcon = document.getElementById('analysis-icon');
+        const analysisText = document.getElementById('analysis-text');
+        
+        // Add animation class to button for visual feedback
+        analyzingBtn.classList.add('button-state-change');
+        
+        // Remove animation class after animation completes
+        setTimeout(() => {
+            analyzingBtn.classList.remove('button-state-change');
+        }, 500);
+        
+        if (isCompleted) {
+            // Change to completed state
+            analyzingBtn.className = 'btn btn-success flex-1';
+            analysisIcon.className = 'fas fa-check';
+            analysisText.textContent = 'Analysis Complete';
+        } else {
+            // Reset to analyzing state
+            analyzingBtn.className = 'btn btn-primary opacity-50 cursor-not-allowed flex-1';
+            analysisIcon.className = 'fas fa-spinner fa-spin';
+            analysisText.textContent = 'Analyzing...';
+        }
+    }
+    
+    // Extract data from PDFs
+    async function extrairDados() {
+        const pdfPreview = document.getElementById('pdf-preview');
+        const checkboxStatus = document.getElementById('checkbox-status');
+        const progressBar = document.getElementById('progress-bar');
+        const progressText = document.getElementById('progress-text');
+        const progressPercentage = document.getElementById('progress-percentage');
+        const previewBtn = document.getElementById('preview-btn');
+        const analysisComplete = document.getElementById('analysis-complete');
+        
+        checkboxStatus.textContent = 'Please select at least one PDF file.';
+        checkboxStatus.classList.remove('collapsed');
+        document.querySelector('.accordion-icon').classList.remove('collapsed');
+        
+        pdfPreview.innerHTML = '';
+        checkboxData = [];
+        gender = '';
+        hope = '';
+        progressBar.style.width = '0%';
+        
+        // Reset button to analyzing state
+        updateAnalysisButtonState(false);
+        
+        if (fileInput.files.length === 0) {
+            checkboxStatus.textContent = 'Please select at least one PDF file.';
+            showToast('Please select at least one PDF file.', 'error');
+            return;
+        }
+        
+        const totalFiles = fileInput.files.length;
+        let processedFiles = 0;
+        
+        for (let i = 0; i < totalFiles; i++) {
+            const arquivo = fileInput.files[i];
+            if (arquivo.size === 0) {
+                checkboxStatus.textContent += `\nError: File ${arquivo.name} is empty (0 bytes).\n`;
+                processedFiles++;
+                updateProgress(processedFiles, totalFiles);
+                continue;
+            }
+            
+            progressText.textContent = `Processing ${arquivo.name} (${i+1}/${totalFiles})`;
+            
+            const pdfContainer = document.createElement('div');
+            pdfContainer.className = 'app-card p-4 fade-in';
+            
+            const pdfTitle = document.createElement('h3');
+            pdfTitle.className = 'text-lg font-medium mb-4';
+            pdfTitle.textContent = arquivo.name;
+            
+            const canvasContainer = document.createElement('div');
+            canvasContainer.className = 'canvas-viewer';
+            
+            const canvasWrapper = document.createElement('div');
+            canvasWrapper.className = 'canvas-container';
+            
+            const canvas = document.createElement('canvas');
+            canvas.id = `pdf-canvas-${i}`;
+            canvas.className = 'w-full h-auto';
+            
+            canvasWrapper.appendChild(canvas);
+            canvasContainer.appendChild(canvasWrapper);
+            pdfContainer.appendChild(pdfTitle);
+            pdfContainer.appendChild(canvasContainer);
+            pdfPreview.appendChild(pdfContainer);
+            
+            try {
+                await processarPDF(arquivo, i);
+            } catch (error) {
+                showToast(`Error processing ${arquivo.name}: ${error.message}`, 'error');
+            }
+            
+            processedFiles++;
+            updateProgress(processedFiles, totalFiles);
+        }
+        
+        // Process the extracted data
+        previewData = prepareCSVData();
+        
+        // Show completion state
+        progressText.textContent = 'Analysis completed';
+        
+        // Update button to completed state
+        updateAnalysisButtonState(true);
+        
+        // Show completion message
+        analysisComplete.classList.add('show');
+        
+        // Enable the preview button
+        previewBtn.disabled = false;
+        
+        if (checkboxData.length > 0) {
+            showToast('PDF analysis completed successfully!', 'success');
+        } else {
+            showToast('No data could be extracted from the PDFs.', 'warning');
+        }
+    }
+    
+    // Update progress bar
+    function updateProgress(processed, total) {
+      const progressBar = document.getElementById('progress-bar');
+      const progressPercentage = document.getElementById('progress-percentage');
+      const percentage = Math.round(processed / total * 100);
+      
+      progressBar.style.width = `${percentage}%`;
+      progressPercentage.textContent = `${percentage}%`;
+    }
+    
+    // Process a single PDF
+    async function processarPDF(file, index) {
+      const checkboxStatus = document.getElementById('checkbox-status');
+      try {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+        checkboxStatus.textContent += `\nAnalyzing PDF: ${file.name}\n\n`;
+        for (let i = 1; i <= pdf.numPages; i++) {
+          await processPage(pdf, i, index, file.name);
+        }
+        checkboxStatus.textContent += `\nAnalysis completed for ${file.name}!\n`;
+      } catch (error) {
+        checkboxStatus.textContent += `\nError processing PDF ${file.name}: ${error.message}\n`;
+        throw error;
+      }
+    }
+    
+    // Process a single page in a PDF
+    async function processPage(pdf, pageNum, index, fileName) {
+      const page = await pdf.getPage(pageNum);
+      const scale = 1.5;
+      const viewport = page.getViewport({
+        scale: scale
+      });
+      const canvas = document.getElementById(`pdf-canvas-${index}`);
+      const context = canvas.getContext('2d');
+      canvas.height = viewport.height;
+      canvas.width = viewport.width;
+      const renderContext = {
+        canvasContext: context,
+        viewport: viewport
+      };
+      await page.render(renderContext).promise;
+      const annotations = await page.getAnnotations();
+      const checkboxStatus = document.getElementById('checkbox-status');
+      checkboxStatus.textContent += `\nPage ${pageNum}:\n`;
+      let checkboxFound = false;
+      const excludeCheckboxes = ["901_20_CheckBox", "903_20_CheckBox", "901_21_CheckBox", "903_21_CheckBox", "901_22_CheckBox", "903_22_CheckBox", "901_23_CheckBox", "903_23_CheckBox", "901_24_CheckBox", "903_24_CheckBox", "901_25_CheckBox", "903_25_CheckBox", "901_26_CheckBox", "903_26_CheckBox", "901_27_CheckBox", "903_27_CheckBox", "901_28_CheckBox", "903_28_CheckBox", "901_29_CheckBox", "903_29_CheckBox", "901_30_CheckBox", "903_30_CheckBox", "901_31_CheckBox", "903_31_CheckBox"];
+      let checkBox5Marked = false;
+      let checkBox6Marked = false;
+      let checkBox7Marked = false;
+      annotations.forEach(annotation => {
+        if (annotation.fieldName === 'Name' || annotation.fieldName === '900_1_Text_SanSerif' || annotation.fieldName === '900_1_Text_SanSerif_1') {
+          const nameParts = splitName(annotation.fieldValue);
+          checkboxStatus.textContent += `Text field: ${annotation.fieldName}\n`;
+          checkboxStatus.textContent += `  First Name: ${nameParts.primeiro}\n`;
+          checkboxStatus.textContent += `  Middle Name: ${nameParts.meio}\n`;
+          checkboxStatus.textContent += `  Last Name: ${nameParts.ultimo}\n`;
+          checkboxData.push({
+            arquivo: fileName,
+            pagina: pageNum,
+            campo: annotation.fieldName,
+            primeiroNome: nameParts.primeiro,
+            nomeDoMeio: nameParts.meio,
+            ultimoNome: nameParts.ultimo,
+            dataNascimento: '',
+            tipo: 'texto'
+          });
+        } else if (annotation.fieldName === '900_2_Text_SanSerif' || annotation.fieldName === '900_2_Text_SanSerif_1' || annotation.fieldName === 'Date of birth') {
+          const formattedDate = formatDate(annotation.fieldValue);
+          checkboxStatus.textContent += `Birth Date: ${formattedDate}\n`;
+          checkboxData.push({
+            arquivo: fileName,
+            pagina: pageNum,
+            campo: 'Birth Date',
+            primeiroNome: '',
+            nomeDoMeio: '',
+            ultimoNome: '',
+            dataNascimento: formattedDate,
+            tipo: 'data'
+          });
+        } else if (annotation.fieldName === '900_5_Text_SanSerif' || annotation.fieldName === '900_5_Text_SanSerif_1' || annotation.fieldName === 'Date immersed') {
+          const formattedDate = formatDate(annotation.fieldValue);
+          checkboxStatus.textContent += `Baptism Date: ${formattedDate}\n`;
+          checkboxData.push({
+            arquivo: fileName,
+            pagina: pageNum,
+            campo: 'Baptism Date',
+            primeiroNome: '',
+            nomeDoMeio: '',
+            ultimoNome: '',
+            dataNascimento: formattedDate,
+            tipo: 'data'
+          });
+        } else if (annotation.subtype === 'Widget' && annotation.fieldType === 'Btn' && !excludeCheckboxes.includes(annotation.fieldName)) {
+          checkboxFound = true;
+          const isChecked = annotation.fieldValue === 'Yes';
+          const isCheckedStr = isChecked ? "Checked" : "Unchecked";
+          checkboxStatus.textContent += `Checkbox: ${annotation.fieldName || 'Unnamed'}, State: ${isCheckedStr}\n`;
+          if (annotation.fieldName === 'Check Box5' || annotation.fieldName === '900_8_CheckBox' || annotation.fieldName === '900_8_CheckBox_1') {
+            checkBox5Marked = isChecked;
+          }
+          if (annotation.fieldName === 'Check Box6' || annotation.fieldName === '900_9_CheckBox' || annotation.fieldName === '900_9_CheckBox_1') {
+            checkBox6Marked = isChecked;
+          }
+          if (annotation.fieldName === 'Check Box7' || annotation.fieldName === '900_10_CheckBox' || annotation.fieldName === '900_10_CheckBox_1') {
+            checkBox7Marked = isChecked;
+          }
+          checkboxData.push({
+            arquivo: fileName,
+            pagina: pageNum,
+            campo: annotation.fieldName || 'Unnamed',
+            estado: isCheckedStr,
+            tipo: 'checkbox'
+          });
+        }
+      });
+      if (!checkboxFound) {
+        checkboxStatus.textContent += 'No checkboxes found on this page\n';
+      }
+      checkboxData.push({
+        arquivo: fileName,
+        pagina: pageNum,
+        campo: 'Elder Privilege',
+        estado: checkBox5Marked ? 'TRUE' : '',
+        tipo: 'privilegeElder'
+      });
+      checkboxData.push({
+        arquivo: fileName,
+        pagina: pageNum,
+        campo: 'SM Privilege',
+        estado: checkBox6Marked ? 'TRUE' : '',
+        tipo: 'privilegeMS'
+      });
+      checkboxData.push({
+        arquivo: fileName,
+        pagina: pageNum,
+        campo: 'Pioneer Privilege',
+        estado: checkBox7Marked ? 'TRUE' : '',
+        tipo: 'privilegePioneer'
+      });
+    }
+    
+    // Prepare CSV data from checkbox data
+    function prepareCSVData() {
+      const pdfDataMap = new Map();
+      
+      checkboxData.forEach(row => {
+        const pdfKey = `${row.arquivo}-${row.pagina}`;
+        if (!pdfDataMap.has(pdfKey)) {
+          pdfDataMap.set(pdfKey, {
+            primeiroNome: '',
+            nomeDoMeio: '',
+            ultimoNome: '',
+            dataNascimento: '',
+            dataBatismo: '',
+            gender: '',
+            hope: '',
+            privilegeElder: '',
+            privilegeMS: '',
+            privilegePioneer: '',
+            anointedOtherSheep: ''
+          });
+        }
+        
+        const pdfData = pdfDataMap.get(pdfKey);
+        
+        if (row.tipo === 'texto') {
+          pdfData.primeiroNome = row.primeiroNome;
+          pdfData.nomeDoMeio = row.nomeDoMeio;
+          pdfData.ultimoNome = row.ultimoNome;
+        } else if (row.tipo === 'data') {
+          if (row.campo === 'Birth Date') {
+            pdfData.dataNascimento = row.dataNascimento;
+          } else if (row.campo === 'Baptism Date') {
+            pdfData.dataBatismo = row.dataNascimento;
+          }
+        } else if (row.tipo === 'checkbox') {
+          if (row.campo === 'Check Box1' || row.campo === '900_3_CheckBox' || row.campo === '900_3_CheckBox_1') {
+            pdfData.gender = row.estado === 'Checked' ? 'M' : 'F';
+          }
+        } else if (row.tipo === 'privilegeElder') {
+          pdfData.privilegeElder = row.estado;
+        } else if (row.tipo === 'privilegeMS') {
+          pdfData.privilegeMS = row.estado;
+        } else if (row.tipo === 'privilegePioneer') {
+          pdfData.privilegePioneer = row.estado;
+        }
+        
+        pdfDataMap.set(pdfKey, pdfData);
+      });
+      
+      // Convert the map to an array for the preview
+      return Array.from(pdfDataMap.values());
+    }
+    
+    // Display preview data in the table
+    function displayPreviewData() {
+      const tableBody = document.getElementById('csv-preview-body');
+      tableBody.innerHTML = '';
+      
+      if (previewData.length === 0) {
+        // Display a message if there's no data
+        const emptyRow = document.createElement('tr');
+        emptyRow.className = 'empty-row';
+        emptyRow.innerHTML = '<td colspan="10" class="py-8 text-center text-gray-500">No data available. Please analyze PDFs first.</td>';
+        tableBody.appendChild(emptyRow);
+        return;
+      }
+      
+      // Add rows for each data entry
+      previewData.forEach((data, index) => {
+        const row = document.createElement('tr');
+        
+        // First Name cell
+        const firstNameCell = document.createElement('td');
+        firstNameCell.innerHTML = `<input type="text" value="${data.primeiroNome}" 
+                                  onchange="updatePreviewData(${index}, 'primeiroNome', this.value)">`;
+        
+        // Middle Name cell
+        const middleNameCell = document.createElement('td');
+        middleNameCell.innerHTML = `<input type="text" value="${data.nomeDoMeio}" 
+                                   onchange="updatePreviewData(${index}, 'nomeDoMeio', this.value)">`;
+        
+        // Last Name cell
+        const lastNameCell = document.createElement('td');
+        lastNameCell.innerHTML = `<input type="text" value="${data.ultimoNome}" 
+                                 onchange="updatePreviewData(${index}, 'ultimoNome', this.value)">`;
+        
+        // Gender cell
+        const genderCell = document.createElement('td');
+        genderCell.innerHTML = `<select onchange="updatePreviewData(${index}, 'gender', this.value)">
+                               <option value="M" ${data.gender === 'M' ? 'selected' : ''}>M</option>
+                               <option value="F" ${data.gender === 'F' ? 'selected' : ''}>F</option>
+                               <option value="" ${data.gender === '' ? 'selected' : ''}>-</option>
+                               </select>`;
+        
+        // Birth Date cell
+        const birthDateCell = document.createElement('td');
+        birthDateCell.innerHTML = `<input type="text" value="${data.dataNascimento}" 
+                                  onchange="updatePreviewData(${index}, 'dataNascimento', this.value)">`;
+        
+        // Baptism Date cell
+        const baptismDateCell = document.createElement('td');
+        baptismDateCell.innerHTML = `<input type="text" value="${data.dataBatismo}" 
+                                    onchange="updatePreviewData(${index}, 'dataBatismo', this.value)">`;
+        
+        // Elder checkbox
+        const elderCell = document.createElement('td');
+        elderCell.className = 'text-center';
+        elderCell.innerHTML = `<div class="checkbox-wrapper">
+                              <input type="checkbox" ${data.privilegeElder === 'TRUE' ? 'checked' : ''} 
+                              onchange="updatePreviewData(${index}, 'privilegeElder', this.checked ? 'TRUE' : '')">
+                              </div>`;
+        
+        // MS checkbox
+        const msCell = document.createElement('td');
+        msCell.className = 'text-center';
+        msCell.innerHTML = `<div class="checkbox-wrapper">
+                           <input type="checkbox" ${data.privilegeMS === 'TRUE' ? 'checked' : ''} 
+                           onchange="updatePreviewData(${index}, 'privilegeMS', this.checked ? 'TRUE' : '')">
+                           </div>`;
+        
+        // Pioneer checkbox
+        const pioneerCell = document.createElement('td');
+        pioneerCell.className = 'text-center';
+        pioneerCell.innerHTML = `<div class="checkbox-wrapper">
+                                <input type="checkbox" ${data.privilegePioneer === 'TRUE' ? 'checked' : ''} 
+                                onchange="updatePreviewData(${index}, 'privilegePioneer', this.checked ? 'TRUE' : '')">
+                                </div>`;
+        
+        // Delete button
+        const deleteCell = document.createElement('td');
+        deleteCell.className = 'text-center';
+        deleteCell.innerHTML = `<button class="p-2 text-white bg-red-500 rounded-md hover:bg-red-600 transition-colors" onclick="deleteRow(${index})">
+                               <i class="fas fa-trash-alt"></i>
+                               </button>`;
+        
+        // Append cells to the row
+        row.appendChild(firstNameCell);
+        row.appendChild(middleNameCell);
+        row.appendChild(lastNameCell);
+        row.appendChild(genderCell);
+        row.appendChild(birthDateCell);
+        row.appendChild(baptismDateCell);
+        row.appendChild(elderCell);
+        row.appendChild(msCell);
+        row.appendChild(pioneerCell);
+        row.appendChild(deleteCell);
+        
+        // Append the row to the table body
+        tableBody.appendChild(row);
+      });
+    }
+    
+    // Update preview data when edited
+    function updatePreviewData(index, field, value) {
+      previewData[index][field] = value;
+    }
+    
+    // Delete a row from the preview
+    function deleteRow(index) {
+      previewData.splice(index, 1);
+      displayPreviewData();
+      showToast('Row deleted successfully', 'info');
+    }
+    
+    // Add a new empty row
+    function addNewRow() {
+      previewData.push({
+        primeiroNome: '',
+        nomeDoMeio: '',
+        ultimoNome: '',
+        dataNascimento: '',
+        dataBatismo: '',
+        gender: '',
+        privilegeElder: '',
+        privilegeMS: '',
+        privilegePioneer: '',
+        anointedOtherSheep: ''
+      });
+      
+      displayPreviewData();
+      showToast('New row added', 'success');
+      
+      // Scroll to the bottom of the table to see the new row
+      const tableContainer = document.querySelector('.overflow-x-auto');
+      tableContainer.scrollTop = tableContainer.scrollHeight;
+    }
+    
+    // Save CSV from the preview data
+    function salvarCSVFromPreview() {
+      if (previewData.length === 0) {
+        showToast('No data to save. Please add at least one row.', 'error');
+        return;
+      }
+      
+      const csvRows = [];
+      csvRows.push('nameFirst;nameMiddle;nameLast;nameSuffix;nameNickname;maritalStatus;gender;anointedOtherSheep;inactive;dateBirth;addressHomeStreet;addressHomeCity;addressHomeStateProvince;addressHomePostal;phoneMobile;phoneHome;emailMain;emailMain;emailJwpub;dateBaptism;privilegeMS;privilegePioneer;privilegeElder;notes');
+      
+      previewData.forEach(person => {
+        csvRows.push(`${person.primeiroNome};${person.nomeDoMeio};${person.ultimoNome};;;;${person.gender};${person.anointedOtherSheep};;${person.dataNascimento};;;;;;;;;;${person.dataBatismo};${person.privilegeMS};${person.privilegePioneer};${person.privilegeElder};;`);
+      });
+      
+      const csvContent = csvRows.join('\n');
+      const blob = new Blob([csvContent], {
+        type: 'text/csv;charset=utf-8;'
+      });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'circuit_assistant_data.csv';
+      link.click();
+      URL.revokeObjectURL(link.href);
+      
+      showToast('CSV file downloaded successfully!', 'success');
+    }
+    </script>
+
+
+</body></html>
